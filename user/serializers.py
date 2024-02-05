@@ -1,6 +1,8 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from user.models import CustomUser
+from django.contrib.auth import get_user_model
+
+CustomUser = get_user_model()
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
