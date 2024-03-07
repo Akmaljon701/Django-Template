@@ -13,6 +13,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'date_joined': {'read_only': True},
             'last_login': {'read_only': True},
             'is_active': {'read_only': True},
+            'password': {'write_only': True}
         }
 
     def create(self, validated_data):

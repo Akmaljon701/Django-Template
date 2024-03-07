@@ -8,28 +8,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
 
 
-class CustomUserTokenView(APIView):
-    @swagger_auto_schema(request_body=CustomUserTokenSerializer)
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(username=username, password=password)
-        if user is None:
-            return Response({'detail': 'User not found', 'success': False}, status=404)
-        refresh = RefreshToken.for_user(user)
-        serialized_user = CustomUserSerializer(user).data
-        return Response({'refresh': str(refresh), 'access': str(refresh.access_token), 'user': serialized_user})
-
-
-class CurrentCustomUser(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        serializer = CustomUserSerializer(request.user)
-        return Response(serializer.data, status=200)
-
-
 class CustomUserCreateView(APIView):
     @swagger_auto_schema(request_body=CustomUserSerializer)
     def post(self, request):
@@ -41,14 +19,43 @@ class CustomUserCreateView(APIView):
             refresh = RefreshToken.for_user(user)
             serialized_user = CustomUserSerializer(user).data
             return Response({'detail': 'Created successfully!',
-                             'success': True,
                              'refresh': str(refresh),
                              'access': str(refresh.access_token),
                              'user': serialized_user}, status=201)
         return Response({'detail': 'Bad Request!',
-                         'success': False,
                          'data': serializer.errors}, status=400)
 
 
+class CurrentCustomUser(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = CustomUserSerializer(request.user)
+        return Response(serializer.data, status=200)
+
+
+class CustomUserUpdateView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(request_body=CustomUserSerializer)
+    def put(self, request):
+        serializer = CustomUserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'detail': 'Updated successfully!',
+                             'user': serializer.data}, status=200)
+        return Response({'detail': 'Bad Request!',
+                         'data': serializer.errors}, status=400)
+
+
+class CustomUserDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        request.user.delete()
+        return Response({'detail': 'Deleted successfully!'}, status=200)
 
 
