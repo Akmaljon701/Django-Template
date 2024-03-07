@@ -7,8 +7,8 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view()),
     path('token/refresh/', TokenRefreshView.as_view()),
 
-    path('create/', CustomUserCreateView.as_view()),
-    path('update/', CustomUserUpdateView.as_view()),
-    path('delete/', CustomUserDeleteView.as_view()),
-    path('current/', CurrentCustomUser.as_view()),
+    path('create/', create_custom_user),
+    path('update/', update_custom_user),
+    path('delete/', delete_custom_user),
+    path('current/', get_current_user),
 ]
