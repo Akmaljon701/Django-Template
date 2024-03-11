@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from utils.auth_user import check_user
 from .serializers import *
 
 
@@ -26,17 +27,19 @@ def create_custom_user(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@renderer_classes([JSONRenderer])
 def get_current_user(request):
-    user = check_user(request)
-    serializer = CustomUserSerializer(user)
+    serializer = CustomUserSerializer(request.user)
     return Response(serializer.data, status=200)
 
 
 @swagger_auto_schema(method='put', request_body=CustomUserSerializer)
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@renderer_classes([JSONRenderer])
 def update_custom_user(request):
-    user = check_user(request)
-    serializer = CustomUserSerializer(user, data=request.data, partial=True)
+    serializer = CustomUserSerializer(request.user, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response({'detail': 'Updated successfully!',
@@ -46,7 +49,8 @@ def update_custom_user(request):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@renderer_classes([JSONRenderer])
 def delete_custom_user(request):
-    user = check_user(request)
-    user.delete()
+    request.user.delete()
     return Response({'detail': 'Deleted successfully!'}, status=200)
