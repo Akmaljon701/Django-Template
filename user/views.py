@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view, permission_classes, renderer_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes, throttle_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
