@@ -8,3 +8,10 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name_plural = "Users"
 
+
+class ModelForCeleryTest(models.Model):
+    number = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.number}'
+

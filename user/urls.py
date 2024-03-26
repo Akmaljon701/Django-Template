@@ -11,4 +11,5 @@ urlpatterns = [
     path('update/', update_custom_user),
     path('delete/', delete_custom_user),
     path('current/', get_current_user),
+    path('', get_users),
 ]

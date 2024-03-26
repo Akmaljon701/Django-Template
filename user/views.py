@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes, renderer_classes, throttle_classes
 from rest_framework.permissions import IsAuthenticated
@@ -26,6 +27,26 @@ def create_custom_user(request):
                      'data': serializer.errors}, status=400)
 
 
+@swagger_auto_schema(method='GET', manual_parameters=[
+    openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_STRING, required=False),
+    openapi.Parameter('is_active', openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False),
+], responses={200: CustomUserSerializer()})
+@api_view(['GET'])
+def get_users(request):
+    user_id = request.query_params.get('user_id')
+    is_active = request.query_params.get('is_active')
+    if user_id:
+        user = CustomUser.objects.get(id=user_id)
+        serializer = CustomUserSerializer(user)
+    else:
+        users = CustomUser.objects.all()
+        if is_active == 'true': users = users.filter(is_active=True)
+        elif is_active == 'false': users = users.filter(is_active=False)
+        serializer = CustomUserSerializer(users, many=True)
+    return Response(serializer.data, status=200)
+
+
+@swagger_auto_schema(method='GET', responses={200: CustomUserSerializer()})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @renderer_classes([JSONRenderer])
