@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view, permission_classes, renderer_classes, throttle_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -23,11 +23,10 @@ def create_custom_user(request):
                          'refresh': str(refresh),
                          'access': str(refresh.access_token),
                          'user': serialized_user}, status=201)
-    return Response({'detail': 'Bad Request!',
-                     'data': serializer.errors}, status=400)
+    return Response({'detail': 'Bad Request!', 'data': serializer.errors}, status=400)
 
 
-@swagger_auto_schema(method='GET', manual_parameters=[
+@swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_STRING, required=False),
     openapi.Parameter('is_active', openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN, required=False),
 ], responses={200: CustomUserSerializer()})
@@ -46,7 +45,7 @@ def get_users(request):
     return Response(serializer.data, status=200)
 
 
-@swagger_auto_schema(method='GET', responses={200: CustomUserSerializer()})
+@swagger_auto_schema(method='get', responses={200: CustomUserSerializer()})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @renderer_classes([JSONRenderer])
@@ -65,8 +64,7 @@ def update_custom_user(request):
         serializer.save()
         return Response({'detail': 'Updated successfully!',
                          'user': serializer.data}, status=200)
-    return Response({'detail': 'Bad Request!',
-                     'data': serializer.errors}, status=400)
+    return Response({'detail': 'Bad Request!', 'data': serializer.errors}, status=400)
 
 
 @api_view(['DELETE'])

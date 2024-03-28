@@ -2,6 +2,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
+from user.models import ModelForCeleryTest
+
 CustomUser = get_user_model()
 
 
@@ -25,3 +27,9 @@ class CustomUserTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('username', 'password')
+
+
+class ModelForCeleryTestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ModelForCeleryTest
+        fields = '__all__'
