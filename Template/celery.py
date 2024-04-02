@@ -40,15 +40,3 @@ def send_sms_to_telegram(self):
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(5.0, send_sms_to_telegram.s(), name='send every 5')
 
-
-# @app.task(bind=True, ignore_result=True)
-# def debug_task(self):
-#     from user.models import ModelForCeleryTest
-#     ModelForCeleryTest.objects.create(number=1)
-#     print('Celery is working!')
-#
-#
-# @app.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     # Calls 'add_data' every 5 seconds
-#     sender.add_periodic_task(5.0, debug_task.s(), name='add every 5')
